@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Elements with Modals</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Add custom CSS for indentation */
+    .list-group-item {
+      padding-left: 20px;
+    }
+
+    /* Custom CSS for list items with children */
+    .has-children {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3>Expand for more details</h3>
+  <ul id="jsonList" class="list-group">
+    <!-- JSON elements will be inserted here -->
+  </ul>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="elementModalTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="elementName"></p> 
+        <p id="elementDescription"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JSON data
+   var jsonData = {
+   "nodeDataArray": [
+    {"key":0,"name":"OUT and Metrics (What to Test)"},
+    {"key":1,"parent":0,"name":"Target","description":"192 -153.2445652173913"},
+    {"key":2,"parent":0,"name":"Metrics","description":"192 127.24456521739131"},
+    {"key":3,"parent":2,"name":"Domain Specific","description":"255 9.255434782608688"},
+    {"key":11,"parent":2,"name":"Generic","description":"255 245.23369565217394"},
+    {"key":5,"parent":1,"name":"End-to-End Scenario (E2E)","description":"247 -185.7445652173913"},
+    {"key":6,"parent":1,"name":"Layer-Based Testing","description":"247 -120.74456521739131"},
+    {"key":7,"parent":6,"name":"Device","description":"385 -159.7445652173913"},
+    {"key":8,"parent":6,"name":"Network","description":"385 -133.7445652173913"},
+    {"key":9,"parent":6,"name":"Cloud","description":"385 -107.74456521739131"},
+    {"key":10,"parent":6,"name":"Application","description":"385 -81.74456521739131"},
+    {"key":12,"parent":11,"name":"Code-Level","description":"320 35.25543478260869"},
+    {"key":13,"parent":12,"name":"Line Coverage","description":"403 -55.74456521739131"},
+    {"key":14,"parent":12,"name":"Statement-Coverage","description":"403 -29.74456521739131"},
+    {"key":15,"parent":12,"name":"Condition-Coverage","description":"403 -3.7445652173913118"},
+    {"key":16,"parent":12,"name":"Branch-Coverage","description":"403 22.25543478260869"},
+    {"key":17,"parent":12,"name":"Path-Coverage","description":"403 48.25543478260869"},
+    {"key":18,"parent":12,"name":"Loop-Coverage","description":"403 74.25543478260869"},
+    {"key":19,"parent":12,"name":"Method-Coverage","description":"403 100.25543478260869"},
+    {"key":20,"parent":12,"name":"Class-Coverage","description":"403 126.25543478260869"},
+    {"key":21,"parent":11,"name":"Functional-Level","description":"320 191.2554347826087"},
+    {"key":22,"parent":21,"name":"Bug or Defect Based","description":"433 152.2554347826087"},
+    {"key":23,"parent":22,"name":"Number of Defects or Bugs Detected","description":"562 126.25543478260869"},
+    {"key":24,"parent":22,"name":"Number of Failures or Crashes","description":"562 152.2554347826087"},
+    {"key":25,"parent":22,"name":"Number of Code Smells","description":"562 178.2554347826087"},
+    {"key":26,"parent":21,"name":"Specification-Based","description":"433 230.2554347826087"},
+    {"key":27,"parent":26,"name":"Number of Requirements Covered","description":"568 204.2554347826087"},
+    {"key":28,"parent":26,"name":"Number of Feature Covered","description":"568 230.2554347826087"},
+    {"key":29,"parent":26,"name":"Number of Test Cases Passed","description":"568 256.2554347826087"},
+    {"key":30,"parent":11,"name":"Non-Functional-Level","description":"320 455.2119565217391"},
+    {"key":31,"parent":30,"name":"Response Time","description":"460 273.2119565217391"},
+    {"key":32,"parent":30,"name":"Throughput","description":"460 299.2119565217391"},
+    {"key":33,"parent":30,"name":"Number of Connected Devices","description":"460 325.2119565217391"},
+    {"key":34,"parent":30,"name":"Number of Simulataneous Users","description":"460 351.2119565217391"},
+    {"key":35,"parent":30,"name":"Average Latency","description":"460 377.2119565217391"},
+    {"key":36,"parent":30,"name":"CPU Utilization","description":"460 403.2119565217391"},
+    {"key":37,"parent":30,"name":"Memory Usage","description":"460 429.2119565217391"},
+    {"key":38,"parent":30,"name":"Average Load Time","description":"460 455.2119565217391"},
+    {"key":39,"parent":30,"name":"Number of Lost Packets","description":"460 481.2119565217391"},
+    {"key":40,"parent":30,"name":"Network Bandwidth","description":"460 507.2119565217391"},
+    {"key":41,"parent":30,"name":"Number of Vulnerabilities Detected","description":"460 533.2119565217391"},
+    {"key":42,"parent":30,"name":"System Uptime","description":"460 559.2119565217391"},
+    {"key":43,"parent":30,"name":"Device Uptime","description":"460 585.2119565217391"},
+    {"key":44,"parent":30,"name":"Device Power Consumption","description":"460 611.2119565217391"},
+    {"key":45,"parent":30,"name":"MTBF, MTTR","description":"460 637.2119565217391"}
+  ]
+};
+  // Function to create list items and modals
+  function createListAndModals() {
+    var jsonList = document.getElementById("jsonList");
+    var addedKeys = [];
+
+    jsonData.nodeDataArray.forEach(function(item) {
+      // Check if item is already added
+      if (addedKeys.includes(item.key)) {
+        return;
+      }
+
+      var li = document.createElement("li");
+      li.classList.add("list-group-item");
+      li.textContent = item.name;
+
+      // Add collapsible behavior for items with children
+      if (hasChildren(item.key)) {
+        li.classList.add("has-children");
+        li.setAttribute("data-toggle", "collapse");
+        li.setAttribute("data-target", "#collapse-" + item.key);
+      }
+
+      // Set modal content dynamically for items with description
+      if (item.description) {
+        li.setAttribute("data-toggle", "modal");
+        li.setAttribute("data-target", "#elementModal");
+        li.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = item.name;
+          elementName.textContent = "" + item.name;
+          elementDescription.textContent = "" + item.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(item.key);
+      li.style.paddingLeft = (20 * level) + "px";
+
+      jsonList.appendChild(li);
+      addedKeys.push(item.key);
+
+      // Add collapsible content for items with children
+      if (hasChildren(item.key)) {
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + item.key);
+        jsonList.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(item.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to create list items for children recursively
+  function createChildrenList(parentKey, parentElement, addedKeys) {
+    var children = jsonData.nodeDataArray.filter(function(item) {
+      return item.parent === parentKey;
+    });
+
+    children.forEach(function(child) {
+      // Check if child is already added
+      if (addedKeys.includes(child.key)) {
+        return;
+      }
+
+      var childLi = document.createElement("li");
+      childLi.classList.add("list-group-item");
+      childLi.textContent = child.name;
+
+      // Set modal content dynamically for items with description
+      if (child.description) {
+        childLi.setAttribute("data-toggle", "modal");
+        childLi.setAttribute("data-target", "#elementModal");
+        childLi.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = child.name;
+          elementName.textContent = "" + child.name;
+          elementDescription.textContent = "" + child.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(child.key);
+      childLi.style.paddingLeft = (20 * level) + "px";
+
+      parentElement.appendChild(childLi);
+      addedKeys.push(child.key);
+
+      // Check if child has further children
+      if (hasChildren(child.key)) {
+        childLi.classList.add("has-children");
+        childLi.setAttribute("data-toggle", "collapse");
+        childLi.setAttribute("data-target", "#collapse-" + child.key);
+
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + child.key);
+        parentElement.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(child.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to get the hierarchy level of an item
+  function getHierarchyLevel(key) {
+    var item = jsonData.nodeDataArray.find(function(element) {
+      return element.key === key;
+    });
+
+    if (!item || item.key === 0) {
+      return 0;
+    }
+
+    return 1 + getHierarchyLevel(item.parent);
+  }
+
+  // Function to check if an item has children
+  function hasChildren(key) {
+    return jsonData.nodeDataArray.some(function(item) {
+      return item.parent === key;
+    });
+  }
+
+  // Call the function to create list items and modals
+  createListAndModals();
+</script>
+
+<!-- Bootstrap JS (jQuery is required) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

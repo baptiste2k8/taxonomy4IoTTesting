@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Elements with Modals</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Add custom CSS for indentation */
+    .list-group-item {
+      padding-left: 20px;
+    }
+
+    /* Custom CSS for list items with children */
+    .has-children {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3>Expand for more details</h3>
+  <ul id="jsonList" class="list-group">
+    <!-- JSON elements will be inserted here -->
+  </ul>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="elementModalTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="elementName"></p> 
+        <p id="elementDescription"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JSON data
+   var jsonData = {
+   "nodeDataArray": [
+      {"key": 0, "name": "Testing Approach (How)"},
+      {"key": 1, "parent": 0, "name": "Testing Techniques", "description": "right"},
+      {"key": 2, "parent": 1, "name": "Black Box Testing", "description": "right"},
+      {"key": 3, "parent": 1, "name": "Combinatorial Testing", "description": "right"},
+      {"key": 4, "parent": 1, "name": "Decision Table Testing", "description": "right"},
+      {"key": 5, "parent": 1, "name": "Scenario Testing", "description": "right"},
+      {"key": 6, "parent": 1, "name": "UI Navigation Testing", "description": "right"},
+      {"key": 7, "parent": 1, "name": "State-Based Testing", "description": "right"},
+      {"key": 8, "parent": 1, "name": "Boundary Value Testing", "description": "right"},
+      {"key": 9, "parent": 1, "name": "Equivalence Class Testing", "description": "right"},
+      {"key": 10, "parent": 1, "name": "White Box Testing", "description": "right"},
+      {"key": 11, "parent": 10, "name": "Control Flow Testing", "description": "right"},
+      {"key": 12, "parent": 10, "name": "Branch Coverage", "description": "right"},
+      {"key": 13, "parent": 10, "name": "Path Coverage", "description": "right"},
+      {"key": 14, "parent": 10, "name": "Condition Coverage", "description": "right"},
+      {"key": 15, "parent": 10, "name": "Loop Coverage", "description": "right"},
+      {"key": 16, "parent": 10, "name": "MC/DC Testing", "description": "right"},
+      {"key": 17, "parent": 1, "name": "Data Flow Testing", "description": "right"},
+      {"key": 18, "parent": 1, "name": "Patterns-Based Testing", "description": "right"},
+      {"key": 19, "parent": 18, "name": "Periodic Readings Testing", "description": "right"},
+      {"key": 20, "parent": 18, "name": "Triggered Readings Testing", "description": "right"},
+      {"key": 21, "parent": 18, "name": "Alerts Testing", "description": "right"},
+      {"key": 22, "parent": 18, "name": "Actions Testing", "description": "right"},
+      {"key": 23, "parent": 18, "name": "Actuators Testing", "description": "right"},
+      {"key": 24, "parent": 1, "name": "Experience-Based Testing", "description": "right"},
+      {"key": 25, "parent": 24, "name": "Bug Hunt Testing", "description": "right"},
+      {"key": 26, "parent": 24, "name": "Error Guessing Testing", "description": "right"},
+      {"key": 27, "parent": 24, "name": "Exploratory Testing", "description": "right"},
+      {"key": 28, "parent": 1, "name": "Random Testing", "description": "right"},
+      {"key": 29, "parent": 28, "name": "Fuzz Testing", "description": "right"},
+      {"key": 30, "parent": 28, "name": "Monkey Testing", "description": "right"},
+      {"key": 31, "parent": 1, "name": "Verification and Validation", "description": "right"},
+      {"key": 32, "parent": 31, "name": "Static Testing", "description": "right"},
+      {"key": 33, "parent": 32, "name": "Reviews", "description": "right"},
+      {"key": 34, "parent": 32, "name": "Static Analysis", "description": "right"},
+      {"key": 35, "parent": 32, "name": "Model Verification", "description": "right"},
+      {"key": 36, "parent": 31, "name": "Dynamic Testing", "description": "right"},
+      {"key": 37, "parent": 36, "name": "Demonstration", "description": "right"},
+      {"key": 38, "parent": 36, "name": "Prototyping", "description": "right"},
+      {"key": 39, "parent": 38, "name": "Mock-ups", "description": "right"},
+      {"key": 40, "parent": 38, "name": "User Trials", "description": "right"},
+      {"key": 41, "parent": 36, "name": "V & V Analysis", "description": "right"},
+      {"key": 42, "parent": 41, "name": "Model Checking", "description": "right"},
+      {"key": 43, "parent": 41, "name": "Simulation", "description": "right"},
+      {"key": 44, "parent": 1, "name": "Model-Based Testing", "description": "right"},
+      {"key": 45, "parent": 1, "name": "Back-to-Back Testing", "description": "right"},
+      {"key": 46, "parent": 1, "name": "Keyword-Driven Testing", "description": "right"},
+      {"key": 47, "parent": 1, "name": "A/B Testing", "description": "right"},
+      {"key": 48, "parent": 0,"name": "Testing Types", "description": "left"},
+      {"key": 50, "parent": 48, "name": "Compliance Testing", "description": "left"},
+      {"key": 51, "parent": 48, "name": "Functionality Testing", "description": "left"},
+      {"key": 52, "parent": 48, "name": "Accessibility Testing", "description": "left"},
+      {"key": 53, "parent": 48, "name": "Compatibility Testing", "description": "left"},
+      {"key": 54, "parent": 53, "name": "Interoperability Testing", "description": "left"},
+      {"key": 55, "parent": 53, "name": "Co-Existence Testing", "description": "left"},
+      {"key": 56, "parent": 48, "name": "Performance Testing", "description": "left"},
+      {"key": 57, "parent": 56, "name": "Capacity Testing", "description": "left"},
+      {"key": 58, "parent": 56, "name": "Load Testing", "description": "left"},
+      {"key": 59, "parent": 56, "name": "Stress Testing", "description": "left"},
+      {"key": 60, "parent": 56, "name": "Volume Testing", "description": "left"},
+      {"key": 61, "parent": 56, "name": "Endurance Testing", "description": "left"},
+      {"key": 62, "parent": 56, "name": "Spike Testing", "description": "left"},
+      {"key": 63, "parent": 48, "name": "Disaster Recovery Testing", "description": "left"},
+      {"key": 64, "parent": 48, "name": "Maintainability Testing", "description": "left"},
+      {"key": 65, "parent": 64, "name": "Modularity Testing", "description": "left"},
+      {"key": 66, "parent": 64, "name": "Reusability Testing", "description": "left"},
+      {"key": 67, "parent": 64, "name": "Analysability Testing", "description": "left"},
+      {"key": 68, "parent": 64, "name": "Modifiability Testing", "description": "left"},
+      {"key": 69, "parent": 48, "name": "Portability Testing", "description": "left"},
+      {"key": 70, "parent": 69, "name": "Installability Testing", "description": "left"},
+      {"key": 71, "parent": 69, "name": "Replaceability Testing", "description": "left"},
+      {"key": 72, "parent": 48, "name": "Reliability Testing", "description": "left"},
+      {"key": 73, "parent": 72, "name": "Availability Testing", "description": "left"},
+      {"key": 74, "parent": 72, "name": "Fault-Tolerance Testing", "description": "left"},
+      {"key": 75, "parent": 72, "name": "Recoverability Testing", "description": "left"},
+      {"key": 76, "parent": 48, "name": "Security Testing", "description": "left"},
+      {"key": 77, "parent": 76, "name": "Vulnerability Scanning", "description": "left"},
+      {"key": 78, "parent": 76, "name": "Penetration Testing", "description": "left"},
+      {"key": 79, "parent": 76, "name": "API Security Testing", "description": "left"},
+      {"key": 80, "parent": 76, "name": "Security Auditing", "description": "left"},
+      {"key": 81, "parent": 76, "name": "Configuration Scanning", "description": "left"},
+      {"key": 82, "parent": 48, "name": "Data Privacy Testing", "description": "left"},
+      {"key": 83, "parent": 48, "name": "Usability Testing", "description": "left"},
+      {"key": 84, "parent": 83, "name": "Accessibility Testing", "description": "left"},
+      {"key": 85, "parent": 83, "name": "UI Testing", "description": "left"},
+      {"key": 86, "parent": 83, "name": "Error Protection Testing", "description": "left"},
+      {"key": 87, "parent": 83, "name": "Learnability Testing", "description": "left"},
+      {"key": 88, "parent": 83, "name": "UX Testing", "description": "left"},
+      {"key": 89, "parent": 48, "name": "Scalability Testing", "description": "left"},
+      {"key": 90, "parent": 48, "name": "Connectivity Testing", "description": "left"},
+      {"key": 91, "parent": 48, "name": "Distributivity Testing", "description": "left"},
+      {"key": 92, "parent": 48, "name": "Deployability Testing", "description": "left"},
+      {"key": 93, "parent": 48, "name": "Interoperability Testing", "description": "left"},
+      {"key": 94, "parent": 48, "name": "Energy Efficiency Testing", "description": "left"},
+      {"key": 95, "parent": 0,"name": "Automation Levels", "description": "right"},
+      {"key": 96, "parent": 95, "name": "Manual Testing", "description": "right"},
+      {"key": 97, "parent": 95, "name": "Semi-Automated", "description": "right"},
+      {"key": 98, "parent": 95, "name": "Automated Testing", "description": "right"},
+      {"key": 99, "parent": 0,"name": "Scripting Levels", "description": "right"},
+      {"key": 100, "parent": 99, "name": "Scripted Testing", "description": "right"},
+      {"key": 101, "parent": 99, "name": "Unscripted Testing", "description": "right"},
+      {"key": 102, "parent": 0,"name": "Testing Levels", "description": "right"},
+      {"key": 103, "parent": 102, "name": "Unit Testing", "description": "right"},
+      {"key": 104, "parent": 102, "name": "Integration Testing", "description": "right"},
+      {"key": 105, "parent": 102, "name": "System Testing", "description": "right"},
+      {"key": 106, "parent": 102, "name": "Acceptance Testing", "description": "right"},
+      {"key": 107, "parent": 102, "name": "Regression Testing", "description": "right"},
+      {"key": 108, "parent": 102, "name": "Patch Testing", "description": "right"}
+    ]
+  };
+
+  // Function to create list items and modals
+  function createListAndModals() {
+    var jsonList = document.getElementById("jsonList");
+    var addedKeys = [];
+
+    jsonData.nodeDataArray.forEach(function(item) {
+      // Check if item is already added
+      if (addedKeys.includes(item.key)) {
+        return;
+      }
+
+      var li = document.createElement("li");
+      li.classList.add("list-group-item");
+      li.textContent = item.name;
+
+      // Add collapsible behavior for items with children
+      if (hasChildren(item.key)) {
+        li.classList.add("has-children");
+        li.setAttribute("data-toggle", "collapse");
+        li.setAttribute("data-target", "#collapse-" + item.key);
+      }
+
+      // Set modal content dynamically for items with description
+      if (item.description) {
+        li.setAttribute("data-toggle", "modal");
+        li.setAttribute("data-target", "#elementModal");
+        li.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = item.name;
+          elementName.textContent = "" + item.name;
+          elementDescription.textContent = "" + item.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(item.key);
+      li.style.paddingLeft = (20 * level) + "px";
+
+      jsonList.appendChild(li);
+      addedKeys.push(item.key);
+
+      // Add collapsible content for items with children
+      if (hasChildren(item.key)) {
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + item.key);
+        jsonList.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(item.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to create list items for children recursively
+  function createChildrenList(parentKey, parentElement, addedKeys) {
+    var children = jsonData.nodeDataArray.filter(function(item) {
+      return item.parent === parentKey;
+    });
+
+    children.forEach(function(child) {
+      // Check if child is already added
+      if (addedKeys.includes(child.key)) {
+        return;
+      }
+
+      var childLi = document.createElement("li");
+      childLi.classList.add("list-group-item");
+      childLi.textContent = child.name;
+
+      // Set modal content dynamically for items with description
+      if (child.description) {
+        childLi.setAttribute("data-toggle", "modal");
+        childLi.setAttribute("data-target", "#elementModal");
+        childLi.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = child.name;
+          elementName.textContent = "" + child.name;
+          elementDescription.textContent = "" + child.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(child.key);
+      childLi.style.paddingLeft = (20 * level) + "px";
+
+      parentElement.appendChild(childLi);
+      addedKeys.push(child.key);
+
+      // Check if child has further children
+      if (hasChildren(child.key)) {
+        childLi.classList.add("has-children");
+        childLi.setAttribute("data-toggle", "collapse");
+        childLi.setAttribute("data-target", "#collapse-" + child.key);
+
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + child.key);
+        parentElement.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(child.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to get the hierarchy level of an item
+  function getHierarchyLevel(key) {
+    var item = jsonData.nodeDataArray.find(function(element) {
+      return element.key === key;
+    });
+
+    if (!item || item.key === 0) {
+      return 0;
+    }
+
+    return 1 + getHierarchyLevel(item.parent);
+  }
+
+  // Function to check if an item has children
+  function hasChildren(key) {
+    return jsonData.nodeDataArray.some(function(item) {
+      return item.parent === key;
+    });
+  }
+
+  // Call the function to create list items and modals
+  createListAndModals();
+</script>
+
+<!-- Bootstrap JS (jQuery is required) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Elements with Modals</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Add custom CSS for indentation */
+    .list-group-item {
+      padding-left: 20px;
+    }
+
+    /* Custom CSS for list items with children */
+    .has-children {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h3>Expand for more details</h3>
+  <ul id="jsonList" class="list-group">
+    <!-- JSON elements will be inserted here -->
+  </ul>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="elementModal" tabindex="-1" role="dialog" aria-labelledby="elementModalTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="elementModalTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="elementName"></p> 
+        <p id="elementDescription"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JSON data
+   var jsonData = {
+  "nodeDataArray": [
+    {"key":0, "name":"Artifacts & Tools (Which)"},
+    {"key":1, "parent":0, "name":"Tools", "description":"77 -22"},
+    {"key":2, "parent":0, "name":"Artifacts", "description":"77 43"},
+    {"key":3, "parent":1, "name":"Test Automation Tools", "description":"200 -48"},
+    {"key":4, "parent":1, "name":"Environment Tools", "description":"200 -22"},
+    {"key":5, "parent":4, "name":"Real Tools", "description":"323 4"},
+    {"key":6, "parent":5, "name":"Physical Testbeds", "description":"446 30"},
+    {"key":7, "parent":5, "name":"Real Devices", "description":"446 56"},
+    {"key":8, "parent":4, "name":"Virtual Tools", "description":"323 82"},
+    {"key":9, "parent":8, "name":"Emulators", "description":"446 108"},
+    {"key":10, "parent":8, "name":"Simulators", "description":"446 134"},
+    {"key":11, "parent":8, "name":"Hybrid", "description":"446 160"},
+    {"key":12, "parent":2, "name":"Test Cases", "description":"200 43"},
+    {"key":13, "parent":2, "name":"Test Data", "description":"200 69"},
+    {"key":14, "parent":2, "name":"Test Scenario", "description":"200 95"},
+    {"key":15, "parent":2, "name":"Test Script", "description":"200 121"},
+    {"key":16, "parent":2, "name":"Defects Report", "description":"200 147"},
+    {"key":17, "parent":2, "name":"Test Plan", "description":"200 173"},
+    {"key":18, "parent":2, "name":"Traceability Matrix", "description":"200 199"},
+    {"key":19, "parent":2, "name":"Test Strategy", "description":"200 225"},
+    {"key":20, "parent":2, "name":"Test oracle", "description":"200 251"},
+    {"key":21, "parent":2, "name":"Test Log", "description":"200 277"},
+    {"key":22, "parent":2, "name":"Summary Report", "description":"200 303"}
+  ]
+};
+  // Function to create list items and modals
+  function createListAndModals() {
+    var jsonList = document.getElementById("jsonList");
+    var addedKeys = [];
+
+    jsonData.nodeDataArray.forEach(function(item) {
+      // Check if item is already added
+      if (addedKeys.includes(item.key)) {
+        return;
+      }
+
+      var li = document.createElement("li");
+      li.classList.add("list-group-item");
+      li.textContent = item.name;
+
+      // Add collapsible behavior for items with children
+      if (hasChildren(item.key)) {
+        li.classList.add("has-children");
+        li.setAttribute("data-toggle", "collapse");
+        li.setAttribute("data-target", "#collapse-" + item.key);
+      }
+
+      // Set modal content dynamically for items with description
+      if (item.description) {
+        li.setAttribute("data-toggle", "modal");
+        li.setAttribute("data-target", "#elementModal");
+        li.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = item.name;
+          elementName.textContent = "" + item.name;
+          elementDescription.textContent = "" + item.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(item.key);
+      li.style.paddingLeft = (20 * level) + "px";
+
+      jsonList.appendChild(li);
+      addedKeys.push(item.key);
+
+      // Add collapsible content for items with children
+      if (hasChildren(item.key)) {
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + item.key);
+        jsonList.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(item.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to create list items for children recursively
+  function createChildrenList(parentKey, parentElement, addedKeys) {
+    var children = jsonData.nodeDataArray.filter(function(item) {
+      return item.parent === parentKey;
+    });
+
+    children.forEach(function(child) {
+      // Check if child is already added
+      if (addedKeys.includes(child.key)) {
+        return;
+      }
+
+      var childLi = document.createElement("li");
+      childLi.classList.add("list-group-item");
+      childLi.textContent = child.name;
+
+      // Set modal content dynamically for items with description
+      if (child.description) {
+        childLi.setAttribute("data-toggle", "modal");
+        childLi.setAttribute("data-target", "#elementModal");
+        childLi.addEventListener("click", function() {
+          var modalTitle = document.getElementById("elementModalTitle");
+          var elementName = document.getElementById("elementName");
+          var elementDescription = document.getElementById("elementDescription");
+
+          modalTitle.textContent = child.name;
+          elementName.textContent = "" + child.name;
+          elementDescription.textContent = "" + child.description;
+        });
+      }
+
+      // Add indentation based on hierarchy
+      var level = getHierarchyLevel(child.key);
+      childLi.style.paddingLeft = (20 * level) + "px";
+
+      parentElement.appendChild(childLi);
+      addedKeys.push(child.key);
+
+      // Check if child has further children
+      if (hasChildren(child.key)) {
+        childLi.classList.add("has-children");
+        childLi.setAttribute("data-toggle", "collapse");
+        childLi.setAttribute("data-target", "#collapse-" + child.key);
+
+        var collapseDiv = document.createElement("div");
+        collapseDiv.classList.add("collapse");
+        collapseDiv.setAttribute("id", "collapse-" + child.key);
+        parentElement.appendChild(collapseDiv);
+
+        // Recursively create list items for children
+        createChildrenList(child.key, collapseDiv, addedKeys);
+      }
+    });
+  }
+
+  // Function to get the hierarchy level of an item
+  function getHierarchyLevel(key) {
+    var item = jsonData.nodeDataArray.find(function(element) {
+      return element.key === key;
+    });
+
+    if (!item || item.key === 0) {
+      return 0;
+    }
+
+    return 1 + getHierarchyLevel(item.parent);
+  }
+
+  // Function to check if an item has children
+  function hasChildren(key) {
+    return jsonData.nodeDataArray.some(function(item) {
+      return item.parent === key;
+    });
+  }
+
+  // Call the function to create list items and modals
+  createListAndModals();
+</script>
+
+<!-- Bootstrap JS (jQuery is required) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
